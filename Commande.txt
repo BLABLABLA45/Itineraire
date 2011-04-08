@@ -1,0 +1,16 @@
+Récupérer les modifications sur sa branche:
+git remote add Itiniraire git://github.com/BLABLABLA45/Itineraire.git (ou upstream)
+git fetch Itineraire
+git merge Itineraire/master
+
+Travailler sur sa branche
+git checkout geoffrey (-b pour la créer)
+
+Envoyer ses modifications sur sa branche :
+git commit -a -m 'ff'
+
+Se rebrancher sur la branche master :
+(Si modification : git commit -a)
+git checkout master
+git merge geoffrey
+git push -u origin master
