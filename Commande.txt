@@ -1,6 +1,6 @@
 Récupérer les modifications sur sa branche:
 git remote add Itiniraire git://github.com/BLABLABLA45/Itineraire.git (ou upstream)
-git fetch Itineraire
+git fetch Itineraire (ou upstream)
 git merge Itineraire/master
 
 Travailler sur sa branche
