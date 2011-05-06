@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class Station {
     private int Num;
     private String Nom;
+    private String Statut;
     private ArrayList<Ligne> ListLigne;
     private int CoorX;
     private int CoorY;
@@ -27,6 +28,7 @@ public class Station {
         Nom = no;
         CoorX = cX;
         CoorY = cY;
+        Statut = "normal";
         ListLigne = new ArrayList<Ligne>();
     }
 
@@ -102,6 +104,20 @@ public class Station {
      */
     public void setCoorY(int CoorY) {
         this.CoorY = CoorY;
+    }
+
+    /**
+     * @return the Statut
+     */
+    public String getStatut() {
+        return Statut;
+    }
+
+    /**
+     * @param Statut the Statut to set
+     */
+    public void setStatut(String Statut) {
+        this.Statut = Statut;
     }
 
     

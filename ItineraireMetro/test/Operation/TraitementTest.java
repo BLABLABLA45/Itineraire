@@ -18,13 +18,12 @@ import static org.junit.Assert.*;
  * @author Geoffrey
  */
 public class TraitementTest {
-    
-
+    Station expResult;
+    Carte carte = new Carte();
 
     public TraitementTest() {
     }
 
-    
     @BeforeClass
     public static void setUpClass() throws Exception {
     }
@@ -33,17 +32,16 @@ public class TraitementTest {
     public static void tearDownClass() throws Exception {
     }
 
+    @Before
+    public void setUp() {
+        expResult = carte.getEnsStation().get(5);
+        //expResult = carte.getEnsLignes().get(0).getListTron().get(2).getA();
+    }
+
     @After
     public void tearDown() {
     }
 
-    Station expResult;
-
-    @Before
-    public void setUp() {
-        Carte carte = new Carte();
-        expResult = carte.getEnsLignes().get(0).getListTron().get(2).getA();
-    }
     @Test
     public void testRechercheCoord() {
         System.out.println("rechercheCoord");
@@ -60,6 +58,24 @@ public class TraitementTest {
         String n = "six";
         Station result = Traitement.rechercheNom(n);
         assertTrue(expResult.getNom().equals(result.getNom()));
+    }
+
+    @Test
+    public void testMajStation() {
+        System.out.println("majStation");
+        int id = 5;
+        String st = "incident";
+        Traitement.majStation(id, st);
+        assertTrue(carte.getEnsStation().get(id).getStatut().equals(st));
+    }
+
+    @Test
+    public void testMajTroncon() {
+        System.out.println("majTroncon");
+        int id = 5;
+        String st = "incident";
+        Traitement.majTroncon(id, st);
+        assertTrue(carte.getEnsTroncon().get(5).getStatut().equals(st));
     }
 
 }
