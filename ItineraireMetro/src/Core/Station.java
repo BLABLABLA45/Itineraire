@@ -19,6 +19,9 @@ public class Station {
     private int CoorX;
     private int CoorY;
 
+    public Station(){
+        
+    }
 
     public Station(int nu, String no, int cX, int cY){
         Num = nu;

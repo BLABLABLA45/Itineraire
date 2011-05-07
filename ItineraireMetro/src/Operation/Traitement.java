@@ -49,20 +49,6 @@ public class Traitement {
     }
 
     /*
-     *Recherche la station correspondante à l'id mis en paramêtre et change son statut
-     */
-    public static void majStation(int id, String st){
-        carte.getEnsStation().get(id).setStatut(st);
-    }
-
-    /*
-     *Recherche le tronçon correspondant à l'id mis en paramêtre et change son statut
-     */
-    public static void majTroncon(int id, String st){
-        carte.getEnsTroncon().get(id).setStatut(st);
-    }
-
-    /*
      * Recherche dans la carte le troncon correspondant à ligne et contenant la station id
      *
      */
@@ -77,12 +63,27 @@ public class Traitement {
         }
         return null;
     }
+    
+    /*
+     *Recherche la station correspondante à l'id mis en paramêtre et change son statut
+     */
+    public static void majStation(int id, String st){
+        carte.getEnsStation().get(id).setStatut(st);
+    }
+
+    /*
+     *Recherche le tronçon correspondant à l'id mis en paramêtre et change son statut
+     */
+    public static void majTroncon(int id, String st){
+        carte.getEnsTroncon().get(id).setStatut(st);
+    }
+
 
     public static Boolean incidentLigne(Ligne l){
         //System.out.println("Traitement de la ligne : " + l.getNum());
         for(Troncon t : l.getListTron()){
             //System.out.println("Traitement du tronçon: " + t.getNum());
-            if(!t.getStatut().equals("normal")
+            if(!t.getStatut().equals("normal") 
                     || !t.getA().getStatut().equals("normal")
                     || !t.getB().getStatut().equals("normal"))return true;
         }
@@ -161,7 +162,6 @@ public class Traitement {
         }
         return p;
     }
-    
 
     public static Itineraire rechercheItineraire(Station dep, Station arr){
         Itineraire I = new Itineraire();
