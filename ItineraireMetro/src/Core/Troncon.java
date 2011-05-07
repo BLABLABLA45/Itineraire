@@ -21,7 +21,7 @@ public class Troncon {
         Temps = te;
         A = a;
         B = b;
-        s = Statut;
+        Statut = s;
     }
 
     /**

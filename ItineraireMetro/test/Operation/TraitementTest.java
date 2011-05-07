@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  * @author Geoffrey
  */
 public class TraitementTest {
-    
+    Carte carte = new Carte();
 
 
     public TraitementTest() {
@@ -41,7 +41,6 @@ public class TraitementTest {
 
     @Before
     public void setUp() {
-        Carte carte = new Carte();
         expResult = carte.getEnsLignes().get(0).getListTron().get(2).getA();
     }
     @Test
@@ -60,6 +59,40 @@ public class TraitementTest {
         String n = "six";
         Station result = Traitement.rechercheNom(n);
         assertTrue(expResult.getNom().equals(result.getNom()));
+    }
+
+    @Test
+    public void testMajStation() {
+        System.out.println("majStation");
+        int id = 5;
+        String st = "incident";
+        Traitement.majStation(id,st);
+        assertTrue(carte.getEnsStation().get(id).getStatut().equals(st));
+    }
+
+    @Test
+    public void testMajTroncon() {
+        System.out.println("majTroncon");
+        int id = 5;
+        String st = "incident";
+        Traitement.majTroncon(id,st);
+        assertTrue(carte.getEnsTroncon().get(id).getStatut().equals(st));
+    }
+
+ 
+  
+
+    @Test
+    public void testRechercheItineraire(){
+        System.out.println("rechercheItineraire");
+        int dep = 7;
+        int arr = 3;
+
+        Itineraire result = Traitement.rechercheItineraire(carte.getEnsStation().get(dep), carte.getEnsStation().get(arr));
+        //System.out.println("Entre la station "+ (dep+1) + " et la station " + (arr+1)+" =>" + result.getItineraire().getLast().getNum());
+        //result.parcourtFinal();
+        assertTrue(result.getItineraire().getLast().getNum() == arr);
+
     }
 
 }
