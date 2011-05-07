@@ -136,10 +136,32 @@ public class TraitementTest {
 
         Itineraire result = Traitement.rechercheItineraire(carte.getEnsStation().get(dep),
                 carte.getEnsStation().get(arr));
-        //System.out.println("Entre la station "+ (dep+1) + " et la station " +
-        //(arr+1)+" =>" + result.getItineraire().getLast().getNum());
-        //result.parcourtFinal();
+        System.out.println("Entre la station "+ (dep+1) + " et la station " +
+            (arr+1)+" =>" + result.getItineraire().getLast().getNum());
+        result.parcourtFinal();
         assertTrue(result.getItineraire().getLast().getNum() == (arr+1));
+    }
+
+    @Test
+    public void testRechercheItinerairePlusRapide(){
+        System.out.println("rechercheItinerairePlusRapide");
+        int dep = 3;
+        int arr = 6;
+        Itineraire test = new Itineraire();
+        
+        test.add(carte.getEnsStation().get(4));
+        test.add(carte.getEnsStation().get(8));
+        test.add(carte.getEnsStation().get(6));
+         
+        /*
+        test.add(carte.getEnsStation().get(4));
+        test.add(carte.getEnsStation().get(5));
+        test.add(carte.getEnsStation().get(6));
+         * */
+        Itineraire result = Traitement.rechercheItinerairePlusRapide(carte.getEnsStation().get(dep),
+                carte.getEnsStation().get(arr));
+        result.parcourtFinal();
+        assertEquals(test.getItineraire(),result.getItineraire());
     }
 
 }

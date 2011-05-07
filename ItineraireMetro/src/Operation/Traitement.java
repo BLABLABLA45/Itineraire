@@ -23,9 +23,9 @@ public class Traitement {
     public static Station rechercheCoord(int x, int y){
         for(Ligne l : carte.getEnsLignes()){
             for(Troncon t : l.getListTron()){
-                System.out.println(x + " " + y + " test : " +t.getA().getCoorX() + " " + t.getA().getCoorY());
+                //System.out.println(x + " " + y + " test : " +t.getA().getCoorX() + " " + t.getA().getCoorY());
                 if(t.getA().getCoorX() == x && t.getA().getCoorY() == y) return t.getA();
-                System.out.println(x + " " + y + " test : " +t.getB().getCoorX() + " " + t.getB().getCoorY());
+                //System.out.println(x + " " + y + " test : " +t.getB().getCoorX() + " " + t.getB().getCoorY());
                 if(t.getB().getCoorX() == x && t.getB().getCoorY() == y) return t.getB();
             }
         }
@@ -39,9 +39,9 @@ public class Traitement {
     public static Station rechercheNom(String n){
         for(Ligne l : carte.getEnsLignes()){
             for(Troncon t : l.getListTron()){
-                System.out.println(n + " test : " +t.getA().getNom());
+                //System.out.println(n + " test : " +t.getA().getNom());
                 if(t.getA().getNom().equals(n)) return t.getA();
-                System.out.println(n + " test : " +t.getB().getNom());
+                //System.out.println(n + " test : " +t.getB().getNom());
                 if(t.getB().getNom().equals(n)) return t.getB();
             }
         }
@@ -244,11 +244,97 @@ public class Traitement {
             if(!ok && dep == suiv.getB()) ok = true;
             if(!ok && dep == suiv.getA()) ok = true;
         }
-
-
         //System.out.println("DERNIERE STATION VISITE : " + suiv.getB().getNom());
+        return I;
+    }
 
+    public static Itineraire rechercheItinerairePlusRapide(Station dep, Station arr){
+        Itineraire I = new Itineraire();
 
+        Ligne lcom = ligneCommune(dep,arr);
+        Station chang = null;
+        if(lcom == null){
+            lcom=dep.getListLigne().get(0);
+            chang = changementLigne(dep,arr);
+        }
+        int sens = sensParcourt(dep,arr);
+        int sensar = 0;
+        if(chang != null)sensar = sensParcourt(chang,arr);
+        else sensar = sens;
+
+        int compteur = 0;
+
+        I.add(dep);
+        I.addChangement(dep.getNom(), lcom.getNom());
+        //compteur += rechercheTroncon(lcom.getNom(),dep.getNum()).getTemps();
+        Iterator<Troncon> It = null;
+        if(sens == 1) It = lcom.getListTron().iterator();
+        else It = lcom.getListTron().descendingIterator();
+        Boolean ok = false;
+        Boolean fin = false;
+        Boolean change = false;
+        Troncon suiv = null;
+
+        while(It.hasNext()){
+            suiv = It.next();
+            if(!ok && dep == suiv.getA() && sens == 1) ok = true;
+            if(!ok && dep == suiv.getB() && sens == 2) ok = true;
+            if(chang  == null){
+                if(ok){
+                    //System.out.println("Sans Chang => A : " + suiv.getA().getNom() + " ,B :" + suiv.getB().getNom());
+                    if(sens == 1){
+                        I.add(suiv.getB());
+                        I.addChangement(suiv.getB().getNom(), lcom.getNom());
+                        compteur += rechercheTroncon(lcom.getNom(),suiv.getB().getNum()).getTemps();
+                        if(suiv.getB() == arr)break;
+                    }
+                    else{
+                        I.add(suiv.getA());
+                        I.addChangement(suiv.getA().getNom(), lcom.getNom());
+                        compteur += rechercheTroncon(lcom.getNom(),suiv.getA().getNum()).getTemps();
+                        if(suiv.getA() == arr)break;
+                    }
+
+                }
+            }
+            if(chang != null && (suiv.getA() == chang || suiv.getB() == chang)){
+                if(ok){
+                    //System.out.println("Avec Chang : "+ chang.getNom() +" => A : " + suiv.getA().getNom() + " ,B :" + suiv.getB().getNom());
+                    if(sens == 1){
+                        I.add(suiv.getB());
+                        I.addChangement(suiv.getB().getNom(), lcom.getNom());
+                        compteur += rechercheTroncon(lcom.getNom(),suiv.getB().getNum()).getTemps();
+                        if(!change && chang == suiv.getB()){
+                            //System.out.println("ON CHANGE DE LIGNE");
+                            lcom = ligneCommune(chang,arr);
+                            It= lcom.getListTron().iterator();
+                            change = true;
+                            chang = null;
+                            sens = sensar;
+                            //ok = false;
+                        }
+                    }else{
+                        I.add(suiv.getA());
+                        I.addChangement(suiv.getA().getNom(), lcom.getNom());
+                        compteur += rechercheTroncon(lcom.getNom(),suiv.getA().getNum()).getTemps();
+                        if(!change && chang == suiv.getA()){
+                            //System.out.println("ON CHANGE DE LIGNE");
+                            lcom = ligneCommune(chang,arr);
+                            It= lcom.getListTron().descendingIterator();
+                            change = true;
+                            chang = null;
+                            sens = sensar;
+                            //ok = false;
+                        }
+                    }
+
+                }
+
+            }
+            if(!ok && dep == suiv.getB()) ok = true;
+            if(!ok && dep == suiv.getA()) ok = true;
+        }
+        System.out.println("Temps du parcourt : " + compteur);
         return I;
     }
 
