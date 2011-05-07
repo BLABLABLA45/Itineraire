@@ -13,20 +13,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-
 /**
  *
  * @author Geoffrey
  */
 public class TraitementTest {
-
     Carte carte = new Carte();
-
 
 
     public TraitementTest() {
     }
 
+    
     @BeforeClass
     public static void setUpClass() throws Exception {
     }
@@ -34,7 +32,6 @@ public class TraitementTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-
 
 
     @After
@@ -72,8 +69,8 @@ public class TraitementTest {
         int id = 5;
         String st = "incident";
 
-        Traitement.majStation(id,st);
 
+        Traitement.majStation(id,st);
         assertTrue(carte.getEnsStation().get(id).getStatut().equals(st));
     }
 
@@ -82,7 +79,6 @@ public class TraitementTest {
         System.out.println("majTroncon");
         int id = 5;
         String st = "incident";
-
         Traitement.majTroncon(id,st);
         assertTrue(carte.getEnsTroncon().get(id).getStatut().equals(st));
     }
