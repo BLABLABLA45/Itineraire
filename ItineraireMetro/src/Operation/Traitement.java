@@ -6,13 +6,11 @@
 package Operation;
 
 import Core.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-/**
- *
- * @author Geoffrey
- */
+
 public class Traitement {
     private static Carte carte = new Carte();
 
@@ -23,9 +21,9 @@ public class Traitement {
     public static Station rechercheCoord(int x, int y){
         for(Ligne l : carte.getEnsLignes()){
             for(Troncon t : l.getListTron()){
-                System.out.println(x + " " + y + " test : " +t.getA().getCoorX() + " " + t.getA().getCoorY());
+                //System.out.println(x + " " + y + " test : " +t.getA().getCoorX() + " " + t.getA().getCoorY());
                 if(t.getA().getCoorX() == x && t.getA().getCoorY() == y) return t.getA();
-                System.out.println(x + " " + y + " test : " +t.getB().getCoorX() + " " + t.getB().getCoorY());
+                //System.out.println(x + " " + y + " test : " +t.getB().getCoorX() + " " + t.getB().getCoorY());
                 if(t.getB().getCoorX() == x && t.getB().getCoorY() == y) return t.getB();
             }
         }
@@ -39,9 +37,9 @@ public class Traitement {
     public static Station rechercheNom(String n){
         for(Ligne l : carte.getEnsLignes()){
             for(Troncon t : l.getListTron()){
-                System.out.println(n + " test : " +t.getA().getNom());
+                //System.out.println(n + " test : " +t.getA().getNom());
                 if(t.getA().getNom().equals(n)) return t.getA();
-                System.out.println(n + " test : " +t.getB().getNom());
+                //System.out.println(n + " test : " +t.getB().getNom());
                 if(t.getB().getNom().equals(n)) return t.getB();
             }
         }
@@ -100,7 +98,7 @@ public class Traitement {
             for(Ligne p : s2.getListLigne()){
                 //System.out.println("S1 : " + l.getNum() + " ,S2 : " + p.getNum());
                 if(l.getNum() == p.getNum() && !incidentLigne(l)){
-                    //System.out.println("Correspondance trouvée : " + l.getNom());
+                    System.out.println("Correspondance trouvée entre " + s1.getNom() + " et " + s2.getNom() +" : " + l.getNom());
                     return l;
                 }
             }
@@ -191,9 +189,11 @@ public class Traitement {
 
         while(It.hasNext()){
             suiv = It.next();
+            System.out.println("A : " + suiv.getA().getNom());
+            System.out.println("B : " + suiv.getB().getNom());
             if(!ok && dep == suiv.getA() && sens == 1) ok = true;
             if(!ok && dep == suiv.getB() && sens == 2) ok = true;
-            if(chang  == null){
+            if(chang  == null || (suiv.getA() != chang && sens == 1) || (suiv.getB() != chang && sens == 2)){
                 if(ok){
                     //System.out.println("Sans Chang => A : " + suiv.getA().getNom() + " ,B :" + suiv.getB().getNom());
                     if(sens == 1){
@@ -244,12 +244,110 @@ public class Traitement {
             if(!ok && dep == suiv.getB()) ok = true;
             if(!ok && dep == suiv.getA()) ok = true;
         }
-
-
         //System.out.println("DERNIERE STATION VISITE : " + suiv.getB().getNom());
-
-
         return I;
+    }
+
+    public static ArrayList<Station> genererVoisin(Station s){
+        ArrayList<Station> voisin = new ArrayList<Station>();
+
+        for(Troncon t : carte.getEnsTroncon()){
+            if(t.getA().getNom().equals(s.getNom()))voisin.add(t.getB());
+            if(t.getB().getNom().equals(s.getNom()))voisin.add(t.getA());
+        }
+        /*System.out.println("Station voisines :");
+        for(Station st : voisin){
+            System.out.println(st.getNom());
+        }*/
+        return voisin;
+    }
+
+    public static Itineraire rechercheItineraireSpecifique(Station dep, Station arr,Station spe){
+        Itineraire I = new Itineraire();
+        ArrayList<Station> listVoisin = new ArrayList<Station>();
+        listVoisin = genererVoisin(dep);
+        ArrayList<Station> dejaVisite = new ArrayList<Station>();
+        dejaVisite.add(dep);
+        ArrayList<Station> tmp = new ArrayList<Station>();
+        
+        if(listVoisin.contains(spe)){
+            listVoisin.remove(spe);
+            listVoisin.add(0, spe);
+        }
+
+        I.add(dep);
+
+        Station prec = dep;
+
+        Boolean vis = false;
+        Boolean cp = false;
+
+        while(true){
+            Station s = listVoisin.get(0);
+            /*System.out.println("On test la station : "+ s.getNom());
+            System.out.print("Liste des stations : ");
+            for(Station st : listVoisin){
+                System.out.print(st.getNom() + " ");
+            }*/
+            System.out.println();
+            if(s.getNom().equals(spe.getNom()))vis = true;
+            if(!s.getNom().equals(dep.getNom())){
+                if(cp){
+                    I.addSpe(s);
+                    cp = false;
+                }
+                else I.add(s);
+                prec = s;
+            }
+            if(s.getNom().equals(arr.getNom())){
+                //System.out.println("ARRIVE");
+                break;
+            }
+            else{
+                //System.out.println("CA DEROULE");
+                dejaVisite.add(s);
+                tmp = genererVoisin(s);
+                //tmp.removeAll(dejaVisite);
+                listVoisin.addAll(0,tmp);
+                
+                if(tmp.size() == 1 && dejaVisite.contains(tmp.get(0))){
+                    if(s.equals(spe)){
+                        listVoisin.removeAll(dejaVisite);
+                        listVoisin.add(0,tmp.get(0));
+                        cp = true;
+                    }
+                    else I.remove(s);
+                }
+                else  listVoisin.removeAll(dejaVisite);
+
+                if(listVoisin.contains(spe)){
+                    listVoisin.remove(spe);
+                    listVoisin.add(0, spe);
+                }
+                if(listVoisin.contains(arr)){
+                    listVoisin.remove(arr);
+                    if(vis && genererVoisin(s).contains(arr)){
+                        listVoisin.add(0, arr);
+                    }
+                    else {
+                        listVoisin.add(arr);
+                    }
+                }
+            }
+        }
+
+        /*System.out.println("Liste de toutes les voisines deja parcouru : " + vis);
+        
+        for(Station st : dejaVisite){
+            System.out.println(st.getNom());
+        }*/
+        return I;
+    }
+
+    public static Itineraire rechercheItinerairePlusRapide(Station dep, Station arr){
+        Itineraire Itires = new Itineraire();
+        Itires.addChemin(carte.Itineraire(dep,arr));
+        return Itires;
     }
 
 }

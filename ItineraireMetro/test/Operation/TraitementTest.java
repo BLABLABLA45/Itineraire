@@ -6,6 +6,7 @@
 package Operation;
 
 import Core.*;
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -13,10 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author Geoffrey
- */
+
 public class TraitementTest {
     Carte carte = new Carte();
 
@@ -33,6 +31,7 @@ public class TraitementTest {
     public static void tearDownClass() throws Exception {
     }
 
+
     @After
     public void tearDown() {
     }
@@ -43,6 +42,7 @@ public class TraitementTest {
     public void setUp() {
         expResult = carte.getEnsLignes().get(0).getListTron().get(2).getA();
     }
+
     @Test
     public void testRechercheCoord() {
         System.out.println("rechercheCoord");
@@ -66,6 +66,8 @@ public class TraitementTest {
         System.out.println("majStation");
         int id = 5;
         String st = "incident";
+
+
         Traitement.majStation(id,st);
         assertTrue(carte.getEnsStation().get(id).getStatut().equals(st));
     }
@@ -122,7 +124,6 @@ public class TraitementTest {
         int result = Traitement.sensParcourt(carte.getEnsStation().get(dep), carte.getEnsStation().get(arr));
         assertEquals(result,2);
     }
-
   
 
     @Test
@@ -131,11 +132,64 @@ public class TraitementTest {
         int dep = 7;
         int arr = 3;
 
-        Itineraire result = Traitement.rechercheItineraire(carte.getEnsStation().get(dep), carte.getEnsStation().get(arr));
-        System.out.println("Entre la station "+ (dep+1) + " et la station " + (arr+1)+" =>" + result.getItineraire().getLast().getNum());
+        Itineraire result = Traitement.rechercheItineraire(carte.getEnsStation().get(dep),
+                carte.getEnsStation().get(arr));
+        System.out.println("Entre la station "+ (dep+1) + " et la station " +
+            (arr+1)+" =>" + result.getItineraire().getLast().getNum());
         result.parcourtFinal();
-        assertTrue(result.getItineraire().getLast().getNum() == (arr +1));
-
+        assertTrue(result.getItineraire().getLast().getNum() == (arr+1));
     }
 
+    @Test
+    public void testGenererVoisin(){
+        System.out.println("genererVoisin");
+        ArrayList<Station> test = new ArrayList<Station>();
+        Station s = carte.getEnsStation().get(5);
+        test.add(carte.getEnsStation().get(2));
+        test.add(carte.getEnsStation().get(8));
+        test.add(carte.getEnsStation().get(4));
+        test.add(carte.getEnsStation().get(6));
+        
+        assertEquals(test,Traitement.genererVoisin(s));
+    }
+
+    @Test
+    public void testRechercheItineraireSpecifique(){
+        System.out.println("rechercheItineraireSpecifique");
+        int dep = 3;
+        int arr = 6;
+        int spe = 5;
+        Itineraire test = new Itineraire();
+
+        test.add(carte.getEnsStation().get(3));
+        test.add(carte.getEnsStation().get(4));
+        test.add(carte.getEnsStation().get(5));
+        test.add(carte.getEnsStation().get(6));
+        Itineraire result = Traitement.rechercheItineraireSpecifique(carte.getEnsStation().get(dep),
+                carte.getEnsStation().get(arr), carte.getEnsStation().get(spe));
+        result.parcourtFinal();
+        assertEquals(test.getItineraire(),result.getItineraire());
+    }
+    
+    @Test
+    public void testRechercheItinerairePlusRapide(){
+        System.out.println("rechercheItinerairePlusRapide");
+        int dep = 3;
+        int arr = 6;
+        Itineraire test = new Itineraire();
+
+        test.add(carte.getEnsStation().get(4));
+        test.add(carte.getEnsStation().get(8));
+        test.add(carte.getEnsStation().get(6));
+
+        /*
+        test.add(carte.getEnsStation().get(4));
+        test.add(carte.getEnsStation().get(5));
+        test.add(carte.getEnsStation().get(6));
+         * */
+        Itineraire result = Traitement.rechercheItinerairePlusRapide(carte.getEnsStation().get(dep),
+                carte.getEnsStation().get(arr));
+        result.parcourtFinal();
+        assertEquals(test.getItineraire(),result.getItineraire());
+    }
 }

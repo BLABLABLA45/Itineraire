@@ -5,10 +5,7 @@
 
 package Core;
 
-/**
- *
- * @author Geoffrey
- */
+
 public class Troncon {
     private int Num;
     private int Temps;

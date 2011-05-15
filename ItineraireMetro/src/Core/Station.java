@@ -7,10 +7,6 @@ package Core;
 
 import java.util.ArrayList;
 
-/**
- *
- * @author Geoffrey
- */
 public class Station {
     private int Num;
     private String Nom;
@@ -18,6 +14,10 @@ public class Station {
     private ArrayList<Ligne> ListLigne;
     private int CoorX;
     private int CoorY;
+    private ArrayList<Voisin> voisins;
+    private int sommet = 9999;
+    private Station precedente;
+    private boolean marque = false;
 
     public Station(){
         
@@ -119,6 +119,36 @@ public class Station {
     public void setStatut(String Statut) {
         this.Statut = Statut;
     }
+public ArrayList<Voisin> getVoisins(){
+        return voisins;
+    }
 
+    public void addVoisin(ArrayList<Voisin> v){
+        voisins = v;
+    }
+
+    public void setSommet(int i){
+        sommet = i;
+    }
+
+    public void setPrecedent(Station s){
+        precedente = s;
+    }
+
+    public void setMarque(){
+        marque = true;
+    }
+
+    public boolean estMarque(){
+        return marque;
+    }
+
+    public int getSommet(){
+        return sommet;
+    }
+
+    public Station getPrecedent(){
+        return precedente;
+    }
     
 }
