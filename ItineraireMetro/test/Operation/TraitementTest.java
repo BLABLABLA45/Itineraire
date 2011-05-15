@@ -6,6 +6,7 @@
 package Operation;
 
 import Core.*;
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -13,10 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author Geoffrey
- */
+
 public class TraitementTest {
     Carte carte = new Carte();
 
@@ -143,16 +141,47 @@ public class TraitementTest {
     }
 
     @Test
+    public void testGenererVoisin(){
+        System.out.println("genererVoisin");
+        ArrayList<Station> test = new ArrayList<Station>();
+        Station s = carte.getEnsStation().get(5);
+        test.add(carte.getEnsStation().get(2));
+        test.add(carte.getEnsStation().get(8));
+        test.add(carte.getEnsStation().get(4));
+        test.add(carte.getEnsStation().get(6));
+        
+        assertEquals(test,Traitement.genererVoisin(s));
+    }
+
+    @Test
+    public void testRechercheItineraireSpecifique(){
+        System.out.println("rechercheItineraireSpecifique");
+        int dep = 3;
+        int arr = 6;
+        int spe = 5;
+        Itineraire test = new Itineraire();
+
+        test.add(carte.getEnsStation().get(3));
+        test.add(carte.getEnsStation().get(4));
+        test.add(carte.getEnsStation().get(5));
+        test.add(carte.getEnsStation().get(6));
+        Itineraire result = Traitement.rechercheItineraireSpecifique(carte.getEnsStation().get(dep),
+                carte.getEnsStation().get(arr), carte.getEnsStation().get(spe));
+        result.parcourtFinal();
+        assertEquals(test.getItineraire(),result.getItineraire());
+    }
+    
+    @Test
     public void testRechercheItinerairePlusRapide(){
         System.out.println("rechercheItinerairePlusRapide");
         int dep = 3;
         int arr = 6;
         Itineraire test = new Itineraire();
-        
+
         test.add(carte.getEnsStation().get(4));
         test.add(carte.getEnsStation().get(8));
         test.add(carte.getEnsStation().get(6));
-         
+
         /*
         test.add(carte.getEnsStation().get(4));
         test.add(carte.getEnsStation().get(5));
@@ -163,5 +192,4 @@ public class TraitementTest {
         result.parcourtFinal();
         assertEquals(test.getItineraire(),result.getItineraire());
     }
-
 }

@@ -6,13 +6,11 @@
 package Operation;
 
 import Core.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-/**
- *
- * @author Geoffrey
- */
+
 public class Traitement {
     private static Carte carte = new Carte();
 
@@ -100,7 +98,7 @@ public class Traitement {
             for(Ligne p : s2.getListLigne()){
                 //System.out.println("S1 : " + l.getNum() + " ,S2 : " + p.getNum());
                 if(l.getNum() == p.getNum() && !incidentLigne(l)){
-                    //System.out.println("Correspondance trouvée : " + l.getNom());
+                    System.out.println("Correspondance trouvée entre " + s1.getNom() + " et " + s2.getNom() +" : " + l.getNom());
                     return l;
                 }
             }
@@ -191,9 +189,11 @@ public class Traitement {
 
         while(It.hasNext()){
             suiv = It.next();
+            System.out.println("A : " + suiv.getA().getNom());
+            System.out.println("B : " + suiv.getB().getNom());
             if(!ok && dep == suiv.getA() && sens == 1) ok = true;
             if(!ok && dep == suiv.getB() && sens == 2) ok = true;
-            if(chang  == null){
+            if(chang  == null || (suiv.getA() != chang && sens == 1) || (suiv.getB() != chang && sens == 2)){
                 if(ok){
                     //System.out.println("Sans Chang => A : " + suiv.getA().getNom() + " ,B :" + suiv.getB().getNom());
                     if(sens == 1){
@@ -248,94 +248,106 @@ public class Traitement {
         return I;
     }
 
-    public static Itineraire rechercheItinerairePlusRapide(Station dep, Station arr){
-        Itineraire I = new Itineraire();
+    public static ArrayList<Station> genererVoisin(Station s){
+        ArrayList<Station> voisin = new ArrayList<Station>();
 
-        Ligne lcom = ligneCommune(dep,arr);
-        Station chang = null;
-        if(lcom == null){
-            lcom=dep.getListLigne().get(0);
-            chang = changementLigne(dep,arr);
+        for(Troncon t : carte.getEnsTroncon()){
+            if(t.getA().getNom().equals(s.getNom()))voisin.add(t.getB());
+            if(t.getB().getNom().equals(s.getNom()))voisin.add(t.getA());
         }
-        int sens = sensParcourt(dep,arr);
-        int sensar = 0;
-        if(chang != null)sensar = sensParcourt(chang,arr);
-        else sensar = sens;
+        /*System.out.println("Station voisines :");
+        for(Station st : voisin){
+            System.out.println(st.getNom());
+        }*/
+        return voisin;
+    }
 
-        int compteur = 0;
+    public static Itineraire rechercheItineraireSpecifique(Station dep, Station arr,Station spe){
+        Itineraire I = new Itineraire();
+        ArrayList<Station> listVoisin = new ArrayList<Station>();
+        listVoisin = genererVoisin(dep);
+        ArrayList<Station> dejaVisite = new ArrayList<Station>();
+        dejaVisite.add(dep);
+        ArrayList<Station> tmp = new ArrayList<Station>();
+        
+        if(listVoisin.contains(spe)){
+            listVoisin.remove(spe);
+            listVoisin.add(0, spe);
+        }
 
         I.add(dep);
-        I.addChangement(dep.getNom(), lcom.getNom());
-        //compteur += rechercheTroncon(lcom.getNom(),dep.getNum()).getTemps();
-        Iterator<Troncon> It = null;
-        if(sens == 1) It = lcom.getListTron().iterator();
-        else It = lcom.getListTron().descendingIterator();
-        Boolean ok = false;
-        Boolean fin = false;
-        Boolean change = false;
-        Troncon suiv = null;
 
-        while(It.hasNext()){
-            suiv = It.next();
-            if(!ok && dep == suiv.getA() && sens == 1) ok = true;
-            if(!ok && dep == suiv.getB() && sens == 2) ok = true;
-            if(chang  == null){
-                if(ok){
-                    //System.out.println("Sans Chang => A : " + suiv.getA().getNom() + " ,B :" + suiv.getB().getNom());
-                    if(sens == 1){
-                        I.add(suiv.getB());
-                        I.addChangement(suiv.getB().getNom(), lcom.getNom());
-                        compteur += rechercheTroncon(lcom.getNom(),suiv.getB().getNum()).getTemps();
-                        if(suiv.getB() == arr)break;
-                    }
-                    else{
-                        I.add(suiv.getA());
-                        I.addChangement(suiv.getA().getNom(), lcom.getNom());
-                        compteur += rechercheTroncon(lcom.getNom(),suiv.getA().getNum()).getTemps();
-                        if(suiv.getA() == arr)break;
-                    }
+        Station prec = dep;
 
+        Boolean vis = false;
+        Boolean cp = false;
+
+        while(true){
+            Station s = listVoisin.get(0);
+            /*System.out.println("On test la station : "+ s.getNom());
+            System.out.print("Liste des stations : ");
+            for(Station st : listVoisin){
+                System.out.print(st.getNom() + " ");
+            }*/
+            System.out.println();
+            if(s.getNom().equals(spe.getNom()))vis = true;
+            if(!s.getNom().equals(dep.getNom())){
+                if(cp){
+                    I.addSpe(s);
+                    cp = false;
+                }
+                else I.add(s);
+                prec = s;
+            }
+            if(s.getNom().equals(arr.getNom())){
+                //System.out.println("ARRIVE");
+                break;
+            }
+            else{
+                //System.out.println("CA DEROULE");
+                dejaVisite.add(s);
+                tmp = genererVoisin(s);
+                //tmp.removeAll(dejaVisite);
+                listVoisin.addAll(0,tmp);
+                
+                if(tmp.size() == 1 && dejaVisite.contains(tmp.get(0))){
+                    if(s.equals(spe)){
+                        listVoisin.removeAll(dejaVisite);
+                        listVoisin.add(0,tmp.get(0));
+                        cp = true;
+                    }
+                    else I.remove(s);
+                }
+                else  listVoisin.removeAll(dejaVisite);
+
+                if(listVoisin.contains(spe)){
+                    listVoisin.remove(spe);
+                    listVoisin.add(0, spe);
+                }
+                if(listVoisin.contains(arr)){
+                    listVoisin.remove(arr);
+                    if(vis && genererVoisin(s).contains(arr)){
+                        listVoisin.add(0, arr);
+                    }
+                    else {
+                        listVoisin.add(arr);
+                    }
                 }
             }
-            if(chang != null && (suiv.getA() == chang || suiv.getB() == chang)){
-                if(ok){
-                    //System.out.println("Avec Chang : "+ chang.getNom() +" => A : " + suiv.getA().getNom() + " ,B :" + suiv.getB().getNom());
-                    if(sens == 1){
-                        I.add(suiv.getB());
-                        I.addChangement(suiv.getB().getNom(), lcom.getNom());
-                        compteur += rechercheTroncon(lcom.getNom(),suiv.getB().getNum()).getTemps();
-                        if(!change && chang == suiv.getB()){
-                            //System.out.println("ON CHANGE DE LIGNE");
-                            lcom = ligneCommune(chang,arr);
-                            It= lcom.getListTron().iterator();
-                            change = true;
-                            chang = null;
-                            sens = sensar;
-                            //ok = false;
-                        }
-                    }else{
-                        I.add(suiv.getA());
-                        I.addChangement(suiv.getA().getNom(), lcom.getNom());
-                        compteur += rechercheTroncon(lcom.getNom(),suiv.getA().getNum()).getTemps();
-                        if(!change && chang == suiv.getA()){
-                            //System.out.println("ON CHANGE DE LIGNE");
-                            lcom = ligneCommune(chang,arr);
-                            It= lcom.getListTron().descendingIterator();
-                            change = true;
-                            chang = null;
-                            sens = sensar;
-                            //ok = false;
-                        }
-                    }
-
-                }
-
-            }
-            if(!ok && dep == suiv.getB()) ok = true;
-            if(!ok && dep == suiv.getA()) ok = true;
         }
-        System.out.println("Temps du parcourt : " + compteur);
+
+        /*System.out.println("Liste de toutes les voisines deja parcouru : " + vis);
+        
+        for(Station st : dejaVisite){
+            System.out.println(st.getNom());
+        }*/
         return I;
+    }
+
+    public static Itineraire rechercheItinerairePlusRapide(Station dep, Station arr){
+        Itineraire Itires = new Itineraire();
+        Itires.addChemin(carte.Itineraire(dep,arr));
+        return Itires;
     }
 
 }

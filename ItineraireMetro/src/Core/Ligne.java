@@ -7,10 +7,7 @@ package Core;
 
 import java.util.LinkedList;
 
-/**
- *
- * @author Geoffrey
- */
+
 public class Ligne {
     private int Num;
     private String Nom;
