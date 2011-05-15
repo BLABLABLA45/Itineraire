@@ -145,7 +145,7 @@ public class TraitementTest {
         System.out.println("genererVoisin");
         ArrayList<Station> test = new ArrayList<Station>();
         Station s = carte.getEnsStation().get(5);
-        test.add(carte.getEnsStation().get(2));
+        //test.add(carte.getEnsStation().get(2));
         test.add(carte.getEnsStation().get(8));
         test.add(carte.getEnsStation().get(4));
         test.add(carte.getEnsStation().get(6));
@@ -160,8 +160,7 @@ public class TraitementTest {
         int arr = 6;
         int spe = 5;
         Itineraire test = new Itineraire();
-
-        test.add(carte.getEnsStation().get(3));
+        //test.add(carte.getEnsStation().get(3));
         test.add(carte.getEnsStation().get(4));
         test.add(carte.getEnsStation().get(5));
         test.add(carte.getEnsStation().get(6));
@@ -174,19 +173,13 @@ public class TraitementTest {
     @Test
     public void testRechercheItinerairePlusRapide(){
         System.out.println("rechercheItinerairePlusRapide");
-        int dep = 3;
-        int arr = 6;
+        int dep = 0;
+        int arr = 3;
         Itineraire test = new Itineraire();
-
+        //test.add(carte.getEnsStation().get(0));
+        test.add(carte.getEnsStation().get(2));
         test.add(carte.getEnsStation().get(4));
-        test.add(carte.getEnsStation().get(8));
-        test.add(carte.getEnsStation().get(6));
-
-        /*
-        test.add(carte.getEnsStation().get(4));
-        test.add(carte.getEnsStation().get(5));
-        test.add(carte.getEnsStation().get(6));
-         * */
+        test.add(carte.getEnsStation().get(3));
         Itineraire result = Traitement.rechercheItinerairePlusRapide(carte.getEnsStation().get(dep),
                 carte.getEnsStation().get(arr));
         result.parcourtFinal();
